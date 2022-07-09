@@ -38,8 +38,9 @@ namespace FlappyBird
         bool gamePause;
         bool pauseButtonPressed;
         bool casualMode = false;
-        bool gameReady = false;
+        bool gameReady;
         bool gameStarted = false;
+        bool pauseTimerResumeOn;
 
         public MainWindow()
         {
@@ -57,6 +58,7 @@ namespace FlappyBird
         {
             gameReady = false;
             gameStarted = false;
+            pauseTimerResumeOn = false;
 
             MyCanvas.Focus(); //spiel wird gefokust
 
@@ -254,13 +256,13 @@ namespace FlappyBird
                 hasJumped = true; //damit man nicht durchgehend fliegen kann
             }
 
-            if (e.Key == Key.Escape && gamePause == false)
+            if (e.Key == Key.Escape && gamePause == false && pauseTimerResumeOn == false)
             {
                 PauseGame();
                 pauseButtonPressed = true; //damit das pausier fenser nicht direkt geschlossen wird
             }
 
-            if (e.Key == Key.Escape && gamePause == true && pauseButtonPressed == false)
+            if (e.Key == Key.Escape && gamePause == true && pauseButtonPressed == false && pauseTimerResumeOn == false)
             {
                 pauseTicks = 0;
                 ResumeGame();
@@ -409,6 +411,7 @@ namespace FlappyBird
 
         private void PauseTimerContinue(object sender, EventArgs e)
         {
+            pauseTimerResumeOn = true;
             pauseTimer.Interval = TimeSpan.FromSeconds(1);
 
             pResume.Content = 3 - pauseTicks;
@@ -420,8 +423,8 @@ namespace FlappyBird
                 pauseTimer.Stop();
                 pResume.Visibility = Visibility.Hidden;
                 gamePause = false;
-                pauseTicks = 0;
                 gameTimer.Start();
+                pauseTimerResumeOn = false;
                 return;
             }
 
